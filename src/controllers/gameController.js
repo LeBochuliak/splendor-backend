@@ -29,11 +29,16 @@ export const setPlayer = (req, res) => {
     },
     totalTokens: 0,
     reservedCards: [],
+    developmentCards: [],
+    nobles: [],
   };
   game.players.push(player);
 
   if (!game.currentPlayerId) {
     game.currentPlayerId = player.id;
+  }
+  if (game.status === 'waiting') {
+    game.status = 'in_progress';
   }
   res.status(201).json(player);
 };

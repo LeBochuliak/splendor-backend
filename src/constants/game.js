@@ -3,11 +3,13 @@ import nobles from './nobles.js';
 import shuffle from './cardsShuffle.js';
 
 export const game = {
+  status: 'waiting',
   players: [],
   currentPlayerId: null,
+  finalRound: false,
 
   tokens: {
-    white: 14,
+    white: 4,
     green: 4,
     blue: 4,
     red: 4,
