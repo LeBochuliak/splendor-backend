@@ -1,46 +1,30 @@
 import createHttpError from 'http-errors';
-import crypto from 'node:crypto';
 import game from '../constants/game.js';
+import createPlayer from '../constants/player.js';
 
-export const setPlayer = (req, res) => {
-  const { name } = req.body;
-  if (game.players.length >= 2) {
+export const setPlayers = (req, res) => {
+  const { players } = req.body;
+
+  if (!Array.isArray(players) || players.length === 0) {
+    throw createHttpError(400, 'Players array is required');
+  }
+
+  if (game.players.length + players.length > 2) {
     throw createHttpError(400, 'Maximum 2 players');
   }
 
-  const player = {
-    id: crypto.randomUUID(),
-    name: name,
-    points: 0,
-    resources: {
-      white: 0,
-      green: 0,
-      blue: 0,
-      red: 0,
-      black: 0,
-    },
-    tokens: {
-      white: 0,
-      green: 0,
-      blue: 0,
-      red: 0,
-      black: 0,
-      gold: 0,
-    },
-    totalTokens: 0,
-    reservedCards: [],
-    developmentCards: [],
-    nobles: [],
-  };
-  game.players.push(player);
+  const newPlayers = players.map(name => createPlayer(name));
+
+  game.players.push(...newPlayers);
+
 
   if (!game.currentPlayerId) {
-    game.currentPlayerId = player.id;
+    game.currentPlayerId = newPlayers[0].id;
   }
-  if (game.status === 'waiting') {
-    game.status = 'in_progress';
+  if (game.players.length === 2) {
+  game.status = 'in_progress';
   }
-  res.status(201).json(player);
+  res.status(201).json(newPlayers);
 };
 
 export const getGame = (req, res) => {

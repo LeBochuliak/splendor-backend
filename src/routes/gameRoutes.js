@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { getGame, setPlayer } from '../controllers/gameController.js';
+import { getGame, setPlayers } from '../controllers/gameController.js';
 
 const router = Router();
 
-router.post('/player', setPlayer);
+router.post('/players', setPlayers);
 
 router.get('/game', getGame);
 
