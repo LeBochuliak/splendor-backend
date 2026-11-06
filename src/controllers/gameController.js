@@ -6,6 +6,10 @@ import createPlayer from '../constants/player.js';
 export const setPlayers = (req, res) => {
   const { players } = req.body;
 
+  if (!game) {
+    throw createHttpError(404, 'Game not found');
+  }
+  
   if (!Array.isArray(players) || players.length === 0) {
     throw createHttpError(400, 'Players array is required');
   }
@@ -18,14 +22,13 @@ export const setPlayers = (req, res) => {
 
   game.players.push(...newPlayers);
 
-
   if (!game.currentPlayerId) {
     game.currentPlayerId = newPlayers[0].id;
   }
   if (game.players.length === 2) {
   game.status = 'in_progress';
   }
-  res.status(201).json(newPlayers);
+  res.status(201).json(game);
 };
 
 export const getGame = (req, res) => {
