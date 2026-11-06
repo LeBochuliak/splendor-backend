@@ -1,6 +1,7 @@
 import createHttpError from 'http-errors';
-import game from '../constants/game.js';
+import { game, createGame, updateGame } from '../constants/game.js';
 import createPlayer from '../constants/player.js';
+
 
 export const setPlayers = (req, res) => {
   const { players } = req.body;
@@ -31,8 +32,26 @@ export const getGame = (req, res) => {
   if (!game) {
     throw createHttpError(404, 'Game not found');
   }
-  if (game.players.length <= 1) {
-    throw createHttpError(400, 'Please add players');
-  }
   res.status(200).json(game);
+};
+
+export const setGame = (req, res) => {
+  const game = createGame();
+  res.status(200).json(game);
+};
+
+export const resetGame = (req, res) => {
+    try {
+        updateGame(null);
+
+        return res.status(200).json({
+            message: "Game successfully reset",
+            game: null,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Failed to reset game",
+            error: error.message,
+        });
+    }
 };

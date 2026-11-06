@@ -1,4 +1,4 @@
-import game from './game.js';
+import { game } from './game.js';
 
 const findBoardCard = (cardId) => {
   for (const level of Object.values(game.cards)) {

@@ -1,6 +1,6 @@
 import createHttpError from 'http-errors';
 import nextPlayer from '../constants/nextPlayer.js';
-import game from '../constants/game.js';
+import { game }  from '../constants/game.js';
 import findBoardCard from '../constants/findBoardCard.js';
 import tokenColors from '../constants/tokenColors.js';
 
