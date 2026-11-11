@@ -217,6 +217,7 @@ export const buyCard = (req, res) => {
   for (const [color, amount] of Object.entries(tokensToPay)) {
     player.tokens[color] -= amount;
     player.totalTokens -= amount;
+    game.tokens[color] += amount;
   }
 
   player.resources[card[0].resource]++;
@@ -249,7 +250,6 @@ export const buyCard = (req, res) => {
     const canTakeNoble = Object.entries(noble.requirement).every(
       ([color, amount]) => amount - player.resources[color] === 0,
     );
-    console.log(canTakeNoble);
     if (canTakeNoble) {
       player.nobles.push(noble);
       player.points += noble.points;
@@ -296,7 +296,11 @@ export const buyCard = (req, res) => {
 
   nextPlayer(game);
 
-  res.status(200).json(game);
+  res.status(200).json({
+      message: 'Game in progress',
+      game: game,
+      winner: null,
+    });
 };
 
 // RESERVE A CARD //
@@ -310,9 +314,6 @@ export const reserveBoardCard = (req, res) => {
   if (!playerId) {
     throw createHttpError(404, 'Player not found');
   }
-  console.log('cardId:', cardId);
-  console.log('type:', typeof cardId);
-  console.log('is null:', cardId === null);
 
   if (!cardId) {
     throw createHttpError(404, 'Card not found');
