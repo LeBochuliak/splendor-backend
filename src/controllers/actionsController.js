@@ -233,6 +233,14 @@ export const buyCard = (req, res) => {
     game.cards[level].board = game.cards[level].board.filter(
       (boardCard) => boardCard.id !== card[0].id,
     );
+
+    if (game.cards[level].board.length < 4) {
+      const newCard = game.cards[level].deck.pop();
+
+      if (newCard) {
+        game.cards[level].board.push(newCard);
+      }
+    }
   }
 
   // check nobles //
