@@ -246,15 +246,19 @@ export const buyCard = (req, res) => {
 
   // check nobles //
 
-  for (const noble of game.nobles) {
-    const canTakeNoble = Object.entries(noble.requirement).every(
-      ([color, amount]) => amount - player.resources[color] === 0,
+ const noble = game.nobles.find((noble) =>
+    Object.entries(noble.requirement).every(
+        ([color, amount]) => player.resources[color] >= amount
+    )
+  );
+
+  if (noble) {
+    player.nobles.push(noble);
+    player.points += noble.points;
+
+    game.nobles = game.nobles.filter(
+        item => item.id !== noble.id
     );
-    if (canTakeNoble) {
-      player.nobles.push(noble);
-      player.points += noble.points;
-      game.nobles = game.nobles.filter((newNoble) => newNoble.id !== noble.id);
-    }
   }
 
   // check victory //
