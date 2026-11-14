@@ -259,7 +259,7 @@ export const buyCard = (req, res) => {
 
   // check victory //
 
-  if (player.points >= 2 && !game.finalRound) {
+  if (player.points >= 15 && !game.finalRound) {
     game.finalRound = true;
     game.status = 'finished';
   }
@@ -363,7 +363,9 @@ export const reserveBoardCard = (req, res) => {
     }
   }
 
-  nextPlayer(game);
+  if (player.totalTokens <= 10) {
+    nextPlayer(game);
+  }
 
   res.status(200).json(game);
 };
@@ -418,7 +420,9 @@ export const reserveDeckCard = (req, res) => {
     throw createHttpError(400, 'There are no cards available for reservation');
   }
 
-  nextPlayer(game);
+  if (player.totalTokens <= 10) {
+    nextPlayer(game);
+  }
 
   res.status(200).json(game);
 };
