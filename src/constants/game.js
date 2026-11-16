@@ -10,6 +10,7 @@ export const createGame = () => {
     players: [],
     currentPlayerId: null,
     finalRound: false,
+    winner: null,
 
     tokens: {
       white: 4,

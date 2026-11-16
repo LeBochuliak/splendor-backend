@@ -5,6 +5,7 @@ import {
   reserveBoardCard,
   reserveDeckCard,
   buyCard,
+  nextPlayerAction,
 } from '../controllers/actionsController.js';
 
 const router = Router();
@@ -18,5 +19,7 @@ router.patch('/action/cards/reserveBoardCard', reserveBoardCard);
 router.patch('/action/cards/reserveDeckCard', reserveDeckCard);
 
 router.patch('/action/cards/buyCard', buyCard);
+
+router.patch('/action/nextPlayer', nextPlayerAction);
 
 export default router;
