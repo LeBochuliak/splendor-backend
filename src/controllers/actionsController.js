@@ -38,12 +38,11 @@ export const takeTokens = (req, res) => {
     throw createHttpError(400, 'You cannot take gold tokens');
   }
 
-  const totalTokensInGame = Object.values(game.tokens).reduce(
-      (acc, value) => acc + value,
-      0
-    );
+  const totalAvailableGems = Object.entries(game.tokens)
+  .filter(([color]) => color !== 'gold')
+  .reduce((acc, [, value]) => acc + value, 0);
 
-  if ((totalTokensInGame - game.tokens.gold) >= 1 && tokens.length < 1) {
+  if (totalAvailableGems >= 1 && tokens.length < 1) {
     throw createHttpError(400, 'Please choose tokens');
   }
   for (const token of tokens) {
@@ -53,10 +52,6 @@ export const takeTokens = (req, res) => {
     if (!tokenColors.includes(token)) {
       throw createHttpError(400, `Token ${token} doesn't exist`);
     }
-  }
-
-  if (player.totalTokens >= 10) {
-    throw createHttpError(400, 'You already have more than 10 tokens');
   }
 
   if (tokens[0] === tokens[1]) {
@@ -69,7 +64,7 @@ export const takeTokens = (req, res) => {
     tokens = tokens.slice(0, 2);
   }
 
-  if (tokens[0] !== tokens[1] && tokens.length < 3 && (totalTokensInGame - game.tokens.gold) >= 3 ) {
+  if (tokens[0] !== tokens[1] && tokens.length < 3 && totalAvailableGems >= 3 ) {
     throw createHttpError(400, 'Please choose third token');
   }
 
@@ -127,10 +122,14 @@ export const returnTokens = (req, res) => {
   if (game.currentPlayerId !== playerId) {
     throw createHttpError(400, 'This is not your turn');
   }
-  if (!Array.isArray(tokens)) {
-    throw createHttpError(400, 'Invalid type of tokens');
+  if (!Array.isArray(tokens) || tokens.length === 0) {
+    throw createHttpError(400, 'Invalid tokens');
   }
 
+  if (player.totalTokens <= 10) {
+    throw createHttpError(400, 'You do not need to return tokens');
+  }
+  
   const tokensToReturn = player.totalTokens - 10;
 
   if (tokens.length < tokensToReturn) {
