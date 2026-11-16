@@ -43,7 +43,7 @@ export const takeTokens = (req, res) => {
       0
     );
 
-  if ((totalTokensInGame - game.tokens.gold) >= 2 && tokens.length < 2) {
+  if ((totalTokensInGame - game.tokens.gold) >= 1 && tokens.length < 1) {
     throw createHttpError(400, 'Please choose tokens');
   }
   for (const token of tokens) {
