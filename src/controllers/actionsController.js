@@ -29,61 +29,54 @@ export const takeTokens = (req, res) => {
     throw createHttpError(400, 'This is not your turn');
   }
   if (!Array.isArray(tokens)) {
-    throw createHttpError(400, 'Invalid type of tokens');
+    throw createHttpError(400, 'Invalid type of gems');
   }
   if (tokens.length > 3) {
-    throw createHttpError(400, 'Too many tokens');
+    throw createHttpError(400, 'Too many gems');
   }
+
   if (tokens.includes('gold')) {
-    throw createHttpError(400, 'You cannot take gold tokens');
+    throw createHttpError(400, 'You cannot take gold gem');
   }
 
   const totalAvailableGems = Object.entries(game.tokens)
-  .filter(([color]) => color !== 'gold')
-  .reduce((acc, [, value]) => acc + value, 0);
+    .filter(([color]) => color !== 'gold')
+    .reduce((acc, [, value]) => acc + value, 0);
 
-  if (totalAvailableGems >= 1 && tokens.length < 1) {
-    throw createHttpError(400, 'Please choose tokens');
+    console.log(totalAvailableGems);
+
+
+  if ((totalAvailableGems >= 1 && tokens.length === 0) || (totalAvailableGems >= 3 && tokens.length < 2)) {
+    throw createHttpError(400, 'Please choose gems');
   }
   for (const token of tokens) {
     if (game.tokens[token] <= 0) {
-      throw createHttpError(400, `Token ${token} is not available`);
+      throw createHttpError(400, `Gem ${token} is not available`);
     }
     if (!tokenColors.includes(token)) {
-      throw createHttpError(400, `Token ${token} doesn't exist`);
+      throw createHttpError(400, `Gem ${token} doesn't exist`);
     }
   }
 
-  if (tokens[0] === tokens[1]) {
+  const uniqueTokens = [...new Set(tokens)];
+
+  if (tokens.length === 2 && uniqueTokens.length === 2) {
+   if (totalAvailableGems !== 2 ) {
+    throw createHttpError(400, 'Please choose third gem');
+   }
+  }
+
+  if (tokens.length === 2 && uniqueTokens.length === 1) {
     if (game.tokens[tokens[0]] < 4) {
-      throw createHttpError(
-        400,
-        'You can only take two gems of the same colour if there are at least four gems of that colour available in the supply',
-      );
+      throw createHttpError(400, 'Not enough gems of this colour');
     }
-    tokens = tokens.slice(0, 2);
   }
 
-  if (tokens[0] !== tokens[1] && tokens.length < 3 && totalAvailableGems >= 3 ) {
-    throw createHttpError(400, 'Please choose third token');
+  if (tokens.length === 3 && uniqueTokens.length === 2) {
+   throw createHttpError(400, 'Please choose three different gems');
   }
-
-  if (
-    tokens[0] !== tokens[1] &&
-    tokens[1] !== tokens[2] &&
-    tokens[0] !== tokens[2]
-  ) {
-    tokens = tokens.slice(0, 3);
-  }
-
-  if (tokens[0] !== tokens[1] && tokens[1] === tokens[2]) {
-    if (game.tokens[tokens[1]] < 4) {
-      throw createHttpError(
-        400,
-        'You can only take two gems of the same colour if there are at least four gems of that colour available in the supply',
-      );
-    }
-    tokens = tokens.slice(1, 3);
+   if (tokens.length === 1 && totalAvailableGems !== 1) {
+    throw createHttpError(400, 'Please choose gems');
   }
 
   for (const token of tokens) {
@@ -129,7 +122,7 @@ export const returnTokens = (req, res) => {
   if (player.totalTokens <= 10) {
     throw createHttpError(400, 'You do not need to return tokens');
   }
-  
+
   const tokensToReturn = player.totalTokens - 10;
 
   if (tokens.length < tokensToReturn) {
